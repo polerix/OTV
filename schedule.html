@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>otv - ARPS Broadcast Schedule</title>
+    <meta name="description" content="OTV ARPS Broadcast Scheduling System — manage weekly programming, time slots, and content assignments.">
+    <link rel="stylesheet" href="css/schedule.css">
+</head>
+
+<body>
+
+    <!-- Header Bar -->
+    <div id="header-bar">
+        <div class="header-left">
+            <img src="ARPS/SVG/OTV-Logo.svg" alt="otv Logo" id="sched-logo">
+            <div class="header-title">
+                <span class="title-main">BROADCAST SCHEDULE</span>
+                <span class="title-sub">ARPS PROGRAMMING SYSTEM</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="live-indicator">
+                <span class="live-dot" id="live-dot"></span>
+                <span id="live-label">ON AIR</span>
+            </div>
+            <div id="on-air-title">otv Station ID</div>
+        </div>
+        <div class="header-right">
+            <div id="clock-display"></div>
+            <a href="index.html" class="nav-btn" id="btn-back-to-arps">← ARPS</a>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div id="main-layout">
+
+        <!-- Day Selector Sidebar -->
+        <div id="day-sidebar">
+            <div class="sidebar-label">DAY</div>
+            <div id="day-tabs">
+                <div class="day-tab" data-day="0" id="day-tab-0">MON</div>
+                <div class="day-tab" data-day="1" id="day-tab-1">TUE</div>
+                <div class="day-tab" data-day="2" id="day-tab-2">WED</div>
+                <div class="day-tab" data-day="3" id="day-tab-3">THU</div>
+                <div class="day-tab" data-day="4" id="day-tab-4">FRI</div>
+                <div class="day-tab" data-day="5" id="day-tab-5">SAT</div>
+                <div class="day-tab" data-day="6" id="day-tab-6">SUN</div>
+            </div>
+            <div class="sidebar-label" style="margin-top: 20px;">FILTER</div>
+            <div id="type-filters">
+                <div class="type-filter active" data-type="all">ALL</div>
+                <div class="type-filter" data-type="Movies">MOVIES</div>
+                <div class="type-filter" data-type="Shows">SHOWS</div>
+                <div class="type-filter" data-type="Ads">ADS</div>
+                <div class="type-filter" data-type="Station ID">STA ID</div>
+                <div class="type-filter" data-type="Music Videos">MUSIC</div>
+                <div class="type-filter" data-type="News">NEWS</div>
+            </div>
+            <div class="sidebar-actions">
+                <button class="sidebar-btn" id="btn-add-slot">+ ADD SLOT</button>
+                <button class="sidebar-btn btn-danger" id="btn-clear-day">CLEAR DAY</button>
+            </div>
+        </div>
+
+        <!-- Schedule Grid -->
+        <div id="schedule-area">
+            <div id="schedule-header">
+                <div class="sched-col-time">TIME</div>
+                <div class="sched-col-title">PROGRAM TITLE</div>
+                <div class="sched-col-type">TYPE</div>
+                <div class="sched-col-dur">DUR</div>
+                <div class="sched-col-status">STATUS</div>
+                <div class="sched-col-actions">CMD</div>
+            </div>
+            <div id="schedule-list">
+                <!-- Schedule rows injected by JS -->
+            </div>
+            <div id="schedule-empty" class="hidden">
+                <span>NO PROGRAMS SCHEDULED</span>
+                <span class="empty-sub">— DEAD AIR —</span>
+            </div>
+        </div>
+
+        <!-- Right Stats Panel -->
+        <div id="stats-panel">
+            <div class="stat-section">
+                <div class="stat-label">TOTAL RUNTIME</div>
+                <div class="stat-value" id="stat-runtime">00:00:00</div>
+            </div>
+            <div class="stat-section">
+                <div class="stat-label">SLOTS FILLED</div>
+                <div class="stat-value" id="stat-slots">0 / 0</div>
+            </div>
+            <div class="stat-section">
+                <div class="stat-label">NEXT PROGRAM</div>
+                <div class="stat-value stat-value--sm" id="stat-next">—</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-label">BREAKDOWN</div>
+            <div id="breakdown-bars">
+                <!-- Injected by JS -->
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-label">WEEK OVERVIEW</div>
+            <div id="week-overview">
+                <!-- 7 mini day indicators -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ADD SLOT MODAL -->
+    <div id="add-modal" class="modal-backdrop hidden">
+        <div class="sched-modal">
+            <span class="close-btn" id="add-modal-close">&#x2715;</span>
+            <h2>ADD PROGRAM SLOT</h2>
+
+            <div class="form-group">
+                <label for="slot-time">START TIME</label>
+                <input type="time" id="slot-time" value="20:00">
+            </div>
+
+            <div class="form-group">
+                <label for="slot-cat">CATEGORY</label>
+                <select id="slot-cat">
+                    <option value="Movies">Movies</option>
+                    <option value="Shows">Shows</option>
+                    <option value="Videos">Videos</option>
+                    <option value="Ads">Ads</option>
+                    <option value="Station ID">Station ID</option>
+                    <option value="Music Videos">Music Videos</option>
+                    <option value="News">News</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>SELECT TITLE</label>
+                <input type="text" id="modal-search" placeholder="Filter titles...">
+                <div id="modal-results">
+                    <!-- items injected by JS -->
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="sched-action-btn" id="btn-confirm-add" disabled>SCHEDULE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT SLOT MODAL -->
+    <div id="edit-modal" class="modal-backdrop hidden">
+        <div class="sched-modal">
+            <span class="close-btn" id="edit-modal-close">&#x2715;</span>
+            <h2>EDIT SLOT</h2>
+            <div class="form-group">
+                <label for="edit-time">START TIME</label>
+                <input type="time" id="edit-time">
+            </div>
+            <div class="form-group">
+                <label for="edit-status">STATUS</label>
+                <select id="edit-status">
+                    <option value="scheduled">Scheduled</option>
+                    <option value="live">Live</option>
+                    <option value="done">Done</option>
+                    <option value="skip">Skip</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="sched-action-btn" id="btn-confirm-edit">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRM DELETE MODAL -->
+    <div id="delete-modal" class="modal-backdrop hidden">
+        <div class="sched-modal sched-modal--sm">
+            <h2>REMOVE SLOT?</h2>
+            <p id="delete-desc">This action cannot be undone.</p>
+            <div class="modal-footer">
+                <button class="sched-action-btn btn-ghost" id="btn-cancel-delete">CANCEL</button>
+                <button class="sched-action-btn btn-danger-confirm" id="btn-confirm-delete">REMOVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/schedule.js"></script>
+</body>
+
+</html>
